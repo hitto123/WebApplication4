@@ -6,18 +6,28 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using WebApplication4.Models.DTOs;
 using WebApplication4.Models.EFModels;
+using WebApplication4.Models.Repository;
+using WebApplication4.Models.Service;
 
 namespace WebApplication4.Controllers
 {
     public class RegistersController : Controller
     {
-        private Model1 db = new Model1();
+        //private Model1 db = new Model1();
 
         // GET: Registers
+        private IRegisterRepository repository;
+
+        public RegistersController()
+        {
+            repository=new RegisterRepository();
+        }
         public ActionResult Index()
         {
-            return View(db.Registers.ToList());
+            var data = new RegisterRepository().GetAll();
+            return View(data);
         }
 
         // GET: Registers/Details/5
@@ -27,12 +37,19 @@ namespace WebApplication4.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Register register = db.Registers.Find(id);
-            if (register == null)
+            try
+            {
+                var data = new RegisterRepository().GetAll();
+                return View(data);
+            }
+            catch (Exception ex) 
             {
                 return HttpNotFound();
             }
-            return View(register);
+           
+                
+            
+           
         }
 
         // GET: Registers/Create
@@ -48,33 +65,37 @@ namespace WebApplication4.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "id,Name,Email")] Register register)
         {
-            //驗證Email
-            var dataIndb = db.Registers.FirstOrDefault(x => x.Email == register.Email);
-            if (dataIndb != null) 
-            {                           //欄位//  //錯誤訊息
-                ModelState.AddModelError("Email", "此信箱已經註冊過");
+            try
+            {
+                //驗證Email
+                //var dataIndb = db.Registers.FirstOrDefault(x => x.Email == register.Email);
+                //if (dataIndb != null)
+                //{                           //欄位//  //錯誤訊息
+                //    //ModelState.AddModelError("Email", "此信箱已經註冊過");
+                //    throw new Exception("此信箱已經註冊過");
+                //}
+                ////由程式直接加入時間
+                //register.CreateTime = DateTime.Now;
+                //db.Registers.Add(register);
+                //db.SaveChanges();
+                new RegisterRepository().Create(register.EntityToDTO());
             }
-            //由程式直接加入時間
-            register.CreateTime = DateTime.Now;
-            
+            catch(Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
             if (ModelState.IsValid)
             {
-                db.Registers.Add(register);
-                db.SaveChanges();
+               
                 return RedirectToAction("Index");
             }
 
             return View(register);
+           
         }
 
        
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+     
     }
 }
