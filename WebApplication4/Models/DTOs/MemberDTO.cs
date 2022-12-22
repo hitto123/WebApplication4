@@ -10,9 +10,9 @@ namespace WebApplication4.Models.DTOs
 {
     public class MemberCreateDTO
     {
-       
-       
-        public string Name { get; set; }
+
+	
+		public string Name { get; set; }
        
         public string Account { get; set; }
        

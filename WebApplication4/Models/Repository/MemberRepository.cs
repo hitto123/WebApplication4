@@ -10,19 +10,19 @@ namespace WebApplication4.Models.Repository
 {
     public class MemberRepository : IMemberRepository
     {
-        private AppDbContext db = new AppDbContext();
+        private AppDbContext db;
         public MemberRepository()
         {
             db = new AppDbContext();
         }
-        public void Create(MemberCreateDTO memberCreateDTO)
+        public void Create(MemberCreateDTO dto)
         {
             Member member = new Member
-            {
-                Name = memberCreateDTO.Name,
-                Account = memberCreateDTO.Account,
-                Password = memberCreateDTO.Password,
-                Cellphone = memberCreateDTO.Cellphone
+            {  
+				Name = dto.Name,
+                Account = dto.Account,
+                Password = dto.Password,
+                Cellphone = dto.Cellphone
             };
             db.Members.Add(member);
             db.SaveChanges();

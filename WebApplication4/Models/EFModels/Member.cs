@@ -8,7 +8,7 @@ namespace WebApplication4.Models.EFModels
 
     public partial class Member
     {
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [StringLength(30)]
